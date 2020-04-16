@@ -11,40 +11,13 @@ object ChatHome {
       head(
         link(
           rel := "stylesheet",
-          href := "https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+          href := "/static/css/bootstrap441.min.css"
         ),
-        script(
-          raw("""
-          function submitForm(){
-            fetch(
-              "/",
-              {method: "POST", body: JSON.stringify({name: nameInput.value, msg: msgInput.value})}
-            ).then(response => response.json())
-             .then(json => {
-              if (json.success) {
-                messageList.innerHTML = json.txt
-                msgInput.value = ""
-                errorDiv.innerText = ""
-              } else {
-                errorDiv.innerText = json.txt
-              }
-            })
-          }
-          var socket = new WebSocket("ws://" + location.host + "/subscribe");
-          var eventIndex = 0
-          socket.onopen = function(ev){ socket.send("" + eventIndex) }
-          socket.onmessage = function(ev){
-            var json = JSON.parse(ev.data)
-            eventIndex = json.index
-            socket.send("" + eventIndex)
-            messageList.innerHTML = json.txt
-          }
-        """)
-        )
+        script(src := "/static/js/chat-form.js")
       ),
       body(
         div(cls := "container")(
-          h1("Scala Chat!"),
+          h1("Scala Chat2!"),
           hr,
           div(id := "messageList")(
             messageList()
