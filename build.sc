@@ -1,8 +1,11 @@
 import $ivy.`com.lihaoyi::mill-contrib-bloop:$MILL_VERSION`
-import mill._, scalalib._
+import mill._, mill.scalalib._, mill.scalajslib._
 
-object app extends ScalaModule {
+object app extends ScalaJSModule {
+
   def scalaVersion = "2.13.1"
+  def scalaJSVersion = "1.0.1"
+
   def ivyDeps = Agg(
     ivy"com.lihaoyi::cask:0.5.7",
     ivy"io.getquill::quill-jdbc:3.5.1",
@@ -10,12 +13,13 @@ object app extends ScalaModule {
     ivy"com.opentable.components:otj-pg-embedded:0.13.3",
     ivy"com.lihaoyi::scalatags:0.8.6"
   )
-  object test extends Tests {
-    def testFrameworks = Seq("utest.runner.Framework")
 
-    def ivyDeps = Agg(
-      ivy"com.lihaoyi::utest::0.7.4",
-      ivy"com.lihaoyi::requests::0.5.2"
-    )
-  }
+  // object test extends Tests {
+  //   def testFrameworks = Seq("utest.runner.Framework")
+
+  //   def ivyDeps = Agg(
+  //     ivy"com.lihaoyi::utest::0.7.4",
+  //     ivy"com.lihaoyi::requests::0.5.2"
+  //   )
+  // }
 }

@@ -17,7 +17,7 @@ object ChatHome {
       ),
       body(
         div(cls := "container")(
-          h1("Scala Chat2!"),
+          h1("Scala Chat 3!"),
           hr,
           div(id := "messageList")(
             messageList()
