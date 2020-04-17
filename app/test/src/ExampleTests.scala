@@ -1,4 +1,4 @@
-package app
+package app.hello
 import io.undertow.Undertow
 
 import utest._
@@ -17,15 +17,13 @@ object ExampleTests extends TestSuite {
   }
 
   val tests = Tests {
-    test("MinimalApplication") - withServer(MinimalApplication) { host =>
+    test("HelloApp") - withServer(App) { host =>
       val success = requests.get(host)
 
       // success.text() ==> "Hello World!"
       success.statusCode ==> 200
 
       requests.get(s"$host/doesnt-exist", check = false).statusCode ==> 404
-
-      requests.post(s"$host/do-thing", data = "hello").text() ==> "olleh"
 
       requests.get(s"$host/do-thing", check = false).statusCode ==> 404
     }
