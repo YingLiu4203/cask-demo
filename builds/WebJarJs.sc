@@ -4,6 +4,9 @@ import mill.playlib.Static
 import mill.scalajslib.ScalaJSModule
 import mill.api.PathRef
 
+import $file.ModuleDefs
+import ModuleDefs.ScalaJsDefs
+
 trait WebJarJsModule extends ScalaJSModule with Static { outer =>
 
   // the public sources defined by [[Static]]
@@ -22,7 +25,7 @@ trait WebJarJsModule extends ScalaJSModule with Static { outer =>
 
   /** Prepend the WebJar Js libs to the overriden output file
     *
-    * @param outputFile the output file path, usually [[T.des/"output.js"]]
+    * @param outputFile the output file path, usually [[T.des/"out.js"]]
     * @param libPathRefs the path of WebJar libs
     * @param overriden the overriden output file
     */
@@ -40,19 +43,16 @@ trait WebJarJsModule extends ScalaJSModule with Static { outer =>
   }
 
   def fastOpt = T {
-    val outputFile = T.dest / "out.js"
     val taskFile = super.fastOpt().path
-
-    // that's the playlib Static resource
-    val libPath = os.Path(assetsPath(), webJarResources().path) / "lib"
+    val outputFile = T.dest / taskFile.last
 
     mergeWebJarJs(outputFile, publicSources(), taskFile)
     PathRef(outputFile)
   }
 
   def fullOpt = T {
-    val outputFile = T.dest / "out.min.js"
     val taskFile = super.fullOpt().path
+    val outputFile = T.dest / taskFile.last
 
     mergeWebJarJs(outputFile, publicSources(), taskFile)
     PathRef(outputFile)
@@ -61,10 +61,15 @@ trait WebJarJsModule extends ScalaJSModule with Static { outer =>
   trait WebJarJsTests extends super.Tests {
     def fastOptTest = T {
       val taskFile = super.fastOptTest().path
-      val outputFile = T.ctx.dest / "out.js"
+      val outputFile = T.ctx.dest / taskFile.last
 
       outer.mergeWebJarJs(outputFile, outer.publicSources(), taskFile)
       PathRef(outputFile)
     }
+
+    import mill.scalajslib.api.JsEnvConfig
+    def jsEnvConfig: T[JsEnvConfig] = T { JsEnvConfig.JsDom() }
+
+    def ivyDeps = ScalaJsDefs.TestIvyDeps
   }
 }
