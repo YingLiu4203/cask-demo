@@ -8,13 +8,13 @@ import mill.playlib.Static
 import $file.builds.ModuleDefs
 import ModuleDefs.{ScalaDefs, ScalaJsDefs}
 
-import $file.builds.RunJar
-import RunJar.RunJar
+import $file.builds.WebJar
+import WebJar.RunWebJar
 
 import $file.builds.WebJarJs
 import WebJarJs.WebJarJsModule
 
-object app extends ScalaModule with RunJar {
+object app extends ScalaModule with RunWebJar {
 
   def scalaVersion = ScalaDefs.ScalaVersion
   def ivyDeps = ScalaDefs.IvyDeps
@@ -24,16 +24,14 @@ object app extends ScalaModule with RunJar {
     def ivyDeps = ScalaDefs.TestIvyDeps
   }
 
-}
+  object appJs extends WebJarJsModule {
+    def scalaVersion = ScalaDefs.ScalaVersion
+    def scalaJSVersion = ScalaJsDefs.ScalaJSVersion
 
-object appJs extends WebJarJsModule {
-  def scalaVersion = ScalaDefs.ScalaVersion
-  def scalaJSVersion = ScalaJsDefs.ScalaJSVersion
-  def ivyDeps = ScalaJsDefs.IvyDeps
+    def ivyDeps = ScalaJsDefs.IvyDeps
 
-  object test extends WebJarJsTests {
-
-    def testFrameworks = ScalaDefs.TestFrameworks
-
+    object test extends WebJarJsTests {
+      def testFrameworks = ScalaDefs.TestFrameworks
+    }
   }
 }

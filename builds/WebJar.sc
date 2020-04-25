@@ -1,7 +1,7 @@
 import $ivy.`com.lihaoyi::mill-contrib-playlib:$MILL_VERSION`
 import mill.playlib.Static
 
-trait RunJar extends Static {
+trait RunWebJar extends Static {
   // to make it runnable and be consistent with assembly output
   // 1) In app source code, put all js/css files in : [[millSourcePath / assetsPath()]], it is app/public
   // 2) create a runPublicAssets Task that copy all files in staticAssets and webJarResources to "T.dest/../.." folder
