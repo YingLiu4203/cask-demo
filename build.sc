@@ -21,20 +21,34 @@ object app extends ScalaModule with Static {
     def ivyDeps = ScalaDefs.TestIvyDeps
   }
 
-  // // hacking, do not work after assembly
-  // by default os.walk skip symlinks therefore we can use this trick
-  // to run the app. This task is shared by both run and runBackground but not assembly
+  // to make it runnable and be consistent with assembly output
+  // 1) In app source code, put all js/css files in : [[millSourcePath / assetsPath()]], it is app/public
+  // 2) create a runPublicAssets Task that copy all files in staticAssets and webJarResources to "T.dest/../.." folder
+  // 3) call runPublicAssets from forkWorkingDir and set it to "T.dest/../../
+  // 4) in code, resolve the statci assets to public folder, webjars in public/lib folder. This is consistent to the assembly output
+
+  def runWorkingDir = T { T.dest / os.up / os.up }
+
+  def runPublicAssets() = T.command {
+    val runPublic = runWorkingDir() / assetsPath()
+
+    val publicStatic = staticAssets().path / assetsPath()
+    if (os.exists(publicStatic)) {
+      os.list(publicStatic)
+        .map(path => os.copy.over(path, runPublic / path.last))
+    }
+
+    val webJarPublic = webJarResources().path / assetsPath()
+    if (os.exists(webJarPublic))
+      os.list(webJarPublic)
+        .map(path => os.copy.over(path, runPublic / path.last))
+
+    PathRef(T.dest)
+  }
+
   override def forkWorkingDir = T {
-
-    val publicFolder = os.Path(assetsPath(), millSourcePath)
-    if (!os.exists(publicFolder)) os.makeDir(publicFolder)
-
-    val symlinkFrom = publicFolder / "lib"
-    if (os.exists(symlinkFrom)) os.remove(symlinkFrom)
-
-    val webJarLib = os.Path(assetsPath(), webJarResources().path) / "lib"
-    os.symlink(symlinkFrom, webJarLib)
-    super.forkWorkingDir()
+    runPublicAssets()
+    runWorkingDir()
   }
 }
 

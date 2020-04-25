@@ -11,11 +11,11 @@ case class UIRoute()(implicit val log: cask.Logger) extends cask.Routes {
 
   @cask.decorators.compress
   @cask.staticFiles("/public/js")
-  def staticFileJs() = "app/resources/js"
+  def staticFileJs() = "public/js"
 
   // hacked in build.sc, but not work after assembly
   @cask.staticFiles("/public/lib", headers = Seq("Content-Type" -> "text/css"))
-  def staticFileCss() = "app/public/lib"
+  def staticFileCss() = "public/lib"
 
   initialize()
 }
