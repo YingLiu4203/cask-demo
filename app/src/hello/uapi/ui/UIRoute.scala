@@ -10,11 +10,12 @@ case class UIRoute()(implicit val log: cask.Logger) extends cask.Routes {
   def hello() = ChatHome.hello()
 
   @cask.decorators.compress
-  @cask.staticFiles("/static/js")
+  @cask.staticFiles("/public/js")
   def staticFileJs() = "app/resources/js"
 
-  @cask.staticFiles("/static/css", headers = Seq("Content-Type" -> "text/css"))
-  def staticFileCss() = "app/resources/css"
+  // hacked in build.sc, but not work after assembly
+  @cask.staticFiles("/public/lib", headers = Seq("Content-Type" -> "text/css"))
+  def staticFileCss() = "app/public/lib"
 
   initialize()
 }

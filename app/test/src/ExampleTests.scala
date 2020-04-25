@@ -19,7 +19,6 @@ object ExampleTests extends TestSuite {
   val tests = Tests {
     test("HelloApp") - withServer(App) { host =>
       val success = requests.get(host)
-
       success.statusCode ==> 200
 
       requests.get(s"$host/doesnt-exist", check = false).statusCode ==> 404

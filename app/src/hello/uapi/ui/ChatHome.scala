@@ -11,9 +11,9 @@ object ChatHome {
       head(
         link(
           rel := "stylesheet",
-          href := "/static/css/bootstrap441.min.css"
+          href := "/public/lib/bootstrap/css/bootstrap.min.css"
         ),
-        script(src := "/static/js/chat-form.js")
+        script(src := "/public/js/chat-form.js")
       ),
       body(
         div(cls := "container")(
