@@ -36,7 +36,7 @@ trait WebJarJsModule extends ScalaJSModule with Static { outer =>
   ): Unit = {
     val jsFiles = libFiles(libPathRefs, "[^\\.]*\\.min.js$")
     val allFiles = jsFiles :+ overriden
-    val allContent = allFiles.map(os.read).mkString(";")
+    val allContent = allFiles.map(os.read).mkString(";\n")
 
     // throw an exception if an error occurs
     os.write(outputFile, allContent)

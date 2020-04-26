@@ -1,19 +1,19 @@
-function submitForm() {
-  fetch('/', {
-    method: 'POST',
-    body: JSON.stringify({ name: nameInput.value, msg: msgInput.value }),
-  })
-    .then((response) => response.json())
-    .then((json) => {
-      if (json.success) {
-        messageList.innerHTML = json.txt
-        msgInput.value = ''
-        errorDiv.innerText = ''
-      } else {
-        errorDiv.innerText = json.txt
-      }
-    })
-}
+// function submitForm() {
+//   fetch('/', {
+//     method: 'POST',
+//     body: JSON.stringify({ name: nameInput.value, msg: msgInput.value }),
+//   })
+//     .then((response) => response.json())
+//     .then((json) => {
+//       if (json.success) {
+//         messageList.innerHTML = json.txt
+//         msgInput.value = ''
+//         errorDiv.innerText = ''
+//       } else {
+//         errorDiv.innerText = json.txt
+//       }
+//     })
+// }
 
 var socket = new WebSocket('ws://' + location.host + '/subscribe')
 var eventIndex = 0

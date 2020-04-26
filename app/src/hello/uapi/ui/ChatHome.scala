@@ -6,39 +6,49 @@ import Util.messageList
 
 object ChatHome {
 
+  val ChatFormId = "chatForm"
+  val ChatSubmitId = "chatSubmit"
+  val MessageListId = "messageList"
+  val ErrorDivId = "errorDiv"
+
   def hello(): String = {
     html(
       head(
         link(
           rel := "stylesheet",
           href := "/public/lib/bootstrap/css/bootstrap.min.css"
-        ),
-        script(src := "/public/js/chat-form.js")
+        )
       ),
       body(
         div(cls := "container")(
           h1("Scala Chat"),
           hr,
-          div(id := "messageList")(
+          div(id := MessageListId)(
             messageList()
           ),
           hr,
-          div(id := "errorDiv", color.red),
-          form(id := "chatForm")(
+          div(id := ErrorDivId, color.red),
+          form(id := ChatFormId)(
             input(
               `type` := "text",
               id := "nameInput",
+              name := "nameInput",
               placeholder := "User name",
               width := "20%"
             ),
             input(
               `type` := "text",
               id := "msgInput",
+              name := "msgInput",
               placeholder := "Please write a message!",
               width := "60%"
             ),
-            input(`type` := "submit", width := "20%")
-          )
+            button(id := ChatSubmitId, `type` := "button", width := "20%")(
+              "Submit"
+            )
+          ),
+          script(src := "/public/js/chat-form.js"),
+          script(src := "/public/js/out.js")
         )
       )
     ).render

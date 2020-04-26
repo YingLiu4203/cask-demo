@@ -12,5 +12,5 @@ The application is broken into to build modules: the `app` is a a typical web ap
 
 The `appJs` depenss on the `app` to share common data models. However, the `appJs` is required to run the `app` properly. There are two ways to organize the build modules:
 
-- nest `appJs` in `app`. It requires that the `app.run` can depend on `app.appJs.fastOpt`.
-- Add a parent module for both `appJs` and `app`.
+- nest `appJs` in `app`. It requires that the `app.run` can depend on `app.appJs.fastOpt`. This one only works if `app` only use Scalajs-compatible libraries.
+- Add a third module that depends on both `appJs` and `app`. Its purpose is for assembly or run. This works fine.

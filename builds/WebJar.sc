@@ -8,27 +8,29 @@ trait RunWebJar extends Static {
   // 3) call runPublicAssets from forkWorkingDir and set it to "T.dest/../../
   // 4) in code, resolve the statci assets to public folder, webjars in public/lib folder. This is consistent to the assembly output
 
-  def runWorkingDir = T { T.dest / os.up / os.up }
+  def runPublicAssets = T {
+    val runWorkingDir = T.dest / os.up / os.up
+    val runPublic = runWorkingDir / assetsPath()
+    if (os.exists(runPublic)) os.remove.all(runPublic)
+    os.makeDir.all(runPublic)
 
-  def runPublicAssets() = T.command {
-    val runPublic = runWorkingDir() / assetsPath()
-
+    // don't use os.copy.over, raise an error if there is a conflict
     val publicStatic = staticAssets().path / assetsPath()
     if (os.exists(publicStatic)) {
       os.list(publicStatic)
-        .map(path => os.copy.over(path, runPublic / path.last))
+        .map(path => os.copy(path, runPublic / path.last))
     }
 
     val webJarPublic = webJarResources().path / assetsPath()
     if (os.exists(webJarPublic))
       os.list(webJarPublic)
-        .map(path => os.copy.over(path, runPublic / path.last))
+        .map(path => os.copy(path, runPublic / path.last))
 
-    PathRef(T.dest)
+    PathRef(runPublic)
   }
 
   override def forkWorkingDir = T {
     runPublicAssets()
-    runWorkingDir()
+    T.dest / os.up / os.up
   }
 }
