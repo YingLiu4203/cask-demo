@@ -1,5 +1,6 @@
 import $ivy.`com.lihaoyi::mill-contrib-bloop:$MILL_VERSION`
-import mill._, mill.scalalib._, mill.scalajslib._
+import mill.Agg
+import mill.scalalib.{DepSyntax, ScalaModule}
 
 object app extends ScalaModule {
 
