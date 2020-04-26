@@ -32,14 +32,14 @@ object ChatHome {
             input(
               `type` := "text",
               id := "nameInput",
-              name := "nameInput",
+              name := "name",
               placeholder := "User name",
               width := "20%"
             ),
             input(
               `type` := "text",
               id := "msgInput",
-              name := "msgInput",
+              name := "msg",
               placeholder := "Please write a message!",
               width := "60%"
             ),

@@ -33,9 +33,10 @@ object ScalaJsDefs {
   def ScalaJSVersion = "1.0.1"
   def IvyDeps = Agg(
     ivy"com.lihaoyi::scalatags_sjs1:0.9.0",
-    ivy"org.webjars:jquery:3.5.0",
+    ivy"org.webjars:jquery:3.4.1",
     ivy"org.scala-js:scalajs-dom_sjs1_2.13:1.0.0",
-    ivy"io.udash::udash-jquery_sjs1:3.0.4"
+    ivy"io.udash::udash-jquery_sjs1:3.0.4",
+    ivy"com.lihaoyi:ujson_sjs1_2.13:1.1.0"
   )
 
   def TestIvyDeps = IvyDeps ++ Agg(
