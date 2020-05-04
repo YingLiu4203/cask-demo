@@ -24,7 +24,7 @@ object ChatHome {
           ),
           hr,
           div(id := "errorDiv", color.red),
-          form(onsubmit := "submitForm(); return false")(
+          form(onsubmit := "submitForm()")(
             input(
               `type` := "text",
               id := "nameInput",

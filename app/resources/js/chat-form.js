@@ -13,6 +13,8 @@ function submitForm() {
         errorDiv.innerText = json.txt
       }
     })
+
+  return false
 }
 
 var socket = new WebSocket('ws://' + location.host + '/subscribe')
