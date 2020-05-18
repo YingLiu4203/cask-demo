@@ -7,7 +7,7 @@ object app extends ScalaModule {
   def scalaVersion = "2.13.1"
 
   def ivyDeps = Agg(
-    ivy"com.lihaoyi::cask:0.5.7",
+    ivy"com.lihaoyi::cask:0.6.0",
     ivy"io.getquill::quill-jdbc:3.5.1",
     ivy"org.postgresql:postgresql:42.2.12",
     ivy"com.opentable.components:otj-pg-embedded:0.13.3",
