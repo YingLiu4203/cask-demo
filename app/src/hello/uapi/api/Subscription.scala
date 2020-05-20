@@ -2,7 +2,7 @@ package app.hello.uapi
 
 import scalatags.Text.all._
 
-import app.db.EmbeddedPg
+import app.db.dbService
 import Util.{openConnections, messageList}
 import cask.endpoints.{WsActor, WsChannelActor}
 import scala.concurrent.ExecutionContext
@@ -16,12 +16,12 @@ object Subscription {
   )(implicit ac: Context, log: Logger): WsActor = {
 
     def subscribe(msg: String) =
-      if (msg.toInt < EmbeddedPg.messages.length) {
+      if (msg.toInt < dbService.messages.length) {
         connection.send(
           cask.Ws.Text(
             ujson
               .Obj(
-                "index" -> EmbeddedPg.messages.length,
+                "index" -> dbService.messages.length,
                 "txt" -> messageList().render
               )
               .render()

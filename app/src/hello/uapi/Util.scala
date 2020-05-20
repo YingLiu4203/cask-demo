@@ -2,7 +2,7 @@ package app.hello.uapi
 
 import scalatags.Text.all._
 
-import app.db.EmbeddedPg
+import app.db.dbService
 
 object Util {
 
@@ -10,7 +10,7 @@ object Util {
 
   def messageList(): Frag =
     frag(
-      for ((name, msg) <- EmbeddedPg.messages)
+      for ((name, msg) <- dbService.messages)
         yield p(b(name), " ", msg)
     )
 }

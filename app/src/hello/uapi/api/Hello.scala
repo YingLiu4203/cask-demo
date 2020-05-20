@@ -2,7 +2,7 @@ package app.hello.uapi
 
 import scalatags.Text.all._
 
-import app.db.EmbeddedPg
+import app.db.dbService
 import Util.{openConnections, messageList}
 
 object Hello {
@@ -23,11 +23,11 @@ object Hello {
         "txt" -> "Message cannot be longer than 160 characters"
       )
     else {
-      EmbeddedPg.insertMessage(name, msg)
+      dbService.insertMessage(name, msg)
       val notification = cask.Ws.Text(
         ujson
           .Obj(
-            "index" -> EmbeddedPg.messages.length,
+            "index" -> dbService.messages.length,
             "txt" -> messageList().render
           )
           .render()

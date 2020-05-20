@@ -1,10 +1,9 @@
 package app.hello.uapi
 
-import scalatags.Text.all._
-
 import Util.messageList
 
 object ChatHome {
+  import scalatags.Text.all._
 
   def hello(): String = {
     html(
