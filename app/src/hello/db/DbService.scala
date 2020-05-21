@@ -1,34 +1,27 @@
 package app.db
 
-import io.getquill._
-import com.zaxxer.hikari.{HikariConfig, HikariDataSource}
+import zio.{Has, UIO, URLayer, URIO, ZIO, ZLayer}
 
+import app.db.dbContext.{DbContext, PgContext}
 import app.model.{Message, MessageOps}
 
-object dbService extends MessageOps {
+object dbService {
 
-  private val dbContext: PostgresJdbcContext[LowerCase.type] = createDbContext()
-  import dbContext._
+  type DbService = Has[Service]
 
-  def messages: List[(String, String)] =
-    dbContext.run(query[Message].map(m => (m.name, m.msg)))
-
-  def insertMessage(name: String, msg: String): Long =
-    dbContext.run(query[Message].insert(lift(Message(name, msg))))
-
-  private def createDbContext(): PostgresJdbcContext[LowerCase.type] = {
-    val pgDataSource = new org.postgresql.ds.PGSimpleDataSource()
-    pgDataSource.setUser("postgres")
-    val config = new HikariConfig()
-    config.setDataSource(pgDataSource)
-    new PostgresJdbcContext(LowerCase, new HikariDataSource(config))
+  trait Service {
+    def messages: UIO[List[(String, String)]]
+    def insertMessage(name: String, msg: String): UIO[Long]
   }
 
-  def createTableIfNotExists() =
-    dbContext.executeAction("""
-    CREATE TABLE IF NOT EXISTS message (
-      name text,
-      msg text
-    );
-  """)
+  // accessor methods, the method signature is different:
+  // 1. add the current Has[Service] as R
+  // 2. remove the effect type of the return type A
+  def messages: URIO[DbService, List[(String, String)]] =
+    ZIO.accessM(_.get.messages)
+  def insertMessage(name: String, msg: String): URIO[DbService, Long] =
+    ZIO.accessM(_.get.insertMessage(name, msg))
+
+  val pgService: URLayer[DbContext, DbService] =
+    ZLayer.fromService(dbContext => PgService(dbContext.context))
 }

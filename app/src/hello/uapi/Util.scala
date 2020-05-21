@@ -1,16 +1,27 @@
 package app.hello.uapi
 
-import scalatags.Text.all._
+import zio.URIO
 
+import scalatags.Text.all._
+import app.db.dbContext
 import app.db.dbService
+import app.db.dbService.DbService
 
 object Util {
 
-  var openConnections = Set.empty[cask.WsChannelActor]
+  val dbLayers = dbContext.embeddedPg >>> dbService.pgService
 
-  def messageList(): Frag =
+  // var openConnections = Set.empty[cask.WsChannelActor]
+
+  def messageList(): URIO[DbService, Frag] = {
+    for {
+      messageList <- dbService.messages
+    } yield (createList(messageList))
+  }
+
+  private def createList(messageList: List[(String, String)]) =
     frag(
-      for ((name, msg) <- dbService.messages)
+      for ((name, msg) <- messageList)
         yield p(b(name), " ", msg)
     )
 }

@@ -11,7 +11,8 @@ object app extends ScalaModule {
     ivy"io.getquill::quill-jdbc:3.5.1",
     ivy"org.postgresql:postgresql:42.2.12",
     ivy"com.opentable.components:otj-pg-embedded:0.13.3",
-    ivy"com.lihaoyi::scalatags:0.8.6"
+    ivy"com.lihaoyi::scalatags:0.8.6",
+    ivy"dev.zio::zio:1.0.0-RC19-2"
   )
 
   object test extends Tests {
