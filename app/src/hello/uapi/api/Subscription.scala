@@ -1,39 +1,60 @@
-// package app.hello.uapi
+package app.hello.uapi
 
-// import scalatags.Text.all._
+import zio.{Runtime, URIO, ZIO}
 
-// import app.db.dbService
-// import Util.{openConnections, messageList}
-// import cask.endpoints.{WsActor, WsChannelActor}
-// import scala.concurrent.ExecutionContext
-// import castor.Context
-// import cask.util.Logger
+import scalatags.Text.all._
 
-// object Subscription {
+import app.db.dbService
+import Util.{dbLayers, openConnections, messageList}
+import cask.endpoints.{WsActor, WsChannelActor}
+import scala.concurrent.ExecutionContext
+import castor.Context
+import cask.util.Logger
 
-//   def handle(
-//       connection: WsChannelActor
-//   )(implicit ac: Context, log: Logger): WsActor = {
+import app.db.dbService
+import app.db.dbService.DbService
 
-//     def subscribe(msg: String) =
-//       if (msg.toInt < dbService.messages.length) {
-//         connection.send(
-//           cask.Ws.Text(
-//             ujson
-//               .Obj(
-//                 "index" -> dbService.messages.length,
-//                 "txt" -> messageList().render
-//               )
-//               .render()
-//           )
-//         )
-//       } else openConnections += connection
+object Subscription {
 
-//     def close() = openConnections -= connection
+  def handle(
+      connection: WsChannelActor
+  )(implicit ac: Context, log: Logger): WsActor = {
 
-//     cask.WsActor {
-//       case cask.Ws.Text(msg)   => subscribe(msg)
-//       case cask.Ws.Close(_, _) => close()
-//     }
-//   }
-// }
+    def subscribe(msg: String) = {
+      val run = runSubscribe(connection, msg).provideLayer(dbLayers)
+      Runtime.default.unsafeRun(run)
+    }
+
+    def close() = openConnections -= connection
+
+    cask.WsActor {
+      case cask.Ws.Text(msg)   => subscribe(msg)
+      case cask.Ws.Close(_, _) => close()
+    }
+
+  }
+
+  private def runSubscribe(
+      connection: WsChannelActor,
+      msg: String
+  ): URIO[DbService, Unit] = {
+    def subscribe(messagesLength: Int, messageList: String) =
+      if (msg.toInt < messagesLength) {
+        connection.send(
+          cask.Ws.Text(
+            ujson
+              .Obj(
+                "index" -> messagesLength,
+                "txt" -> messageList
+              )
+              .render()
+          )
+        )
+      } else openConnections += connection
+
+    for {
+      messages <- dbService.messages
+      messageList <- messageList()
+    } yield subscribe(messages.length, messageList.render)
+  }
+}
