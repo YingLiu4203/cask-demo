@@ -28,8 +28,16 @@ object Util {
         yield p(b(name), " ", msg)
     )
 
-  class getZ(override val path: String) extends cask.endpoints.get(path) {
+  class GetZ(override val path: String) extends cask.endpoints.get(path) {
     def convertToResultType(task: Task[String]): Response.Raw = {
+      val t = Runtime.default.unsafeRunTask(task)
+      Response(t)
+    }
+  }
+
+  class PostJsonZ(override val path: String)
+      extends cask.endpoints.postJson(path) {
+    def convertToResultType(task: Task[ujson.Obj]): Response.Raw = {
       val t = Runtime.default.unsafeRunTask(task)
       Response(t)
     }

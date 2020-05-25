@@ -1,6 +1,6 @@
 package app.hello.uapi
 
-import zio.{Runtime, URIO, ZIO}
+import zio.{Runtime, URIO, UIO, ZIO}
 import scalatags.Text.all._
 
 import app.db.dbService
@@ -10,29 +10,28 @@ import app.db.dbService.DbService
 
 object Hello {
 
-  def postHello(name: String, msg: String): ujson.Obj = {
+  def postHello(name: String, msg: String): UIO[ujson.Obj] = {
     if (name == "")
-      ujson.Obj("success" -> false, "txt" -> "Name cannot be empty")
+      UIO(ujson.Obj("success" -> false, "txt" -> "Name cannot be empty"))
     else if (name.length >= 10)
-      ujson.Obj(
-        "success" -> false,
-        "txt" -> "Name cannot be longer than 10 characters"
+      UIO(
+        ujson.Obj(
+          "success" -> false,
+          "txt" -> "Name cannot be longer than 10 characters"
+        )
       )
     else if (msg == "")
-      ujson.Obj("success" -> false, "txt" -> "Message cannot be empty")
+      UIO(ujson.Obj("success" -> false, "txt" -> "Message cannot be empty"))
     else if (msg.length >= 160)
-      ujson.Obj(
-        "success" -> false,
-        "txt" -> "Message cannot be longer than 160 characters"
+      UIO(
+        ujson.Obj(
+          "success" -> false,
+          "txt" -> "Message cannot be longer than 160 characters"
+        )
       )
     else {
-      insertMessage(name, msg)
+      runEffect(name, msg).provideLayer(dbLayers)
     }
-  }
-
-  private def insertMessage(name: String, msg: String): ujson.Obj = {
-    val run = runEffect(name, msg).provideLayer(dbLayers)
-    Runtime.default.unsafeRun(run)
   }
 
   private def runEffect(

@@ -3,11 +3,11 @@ package app.hello.uapi
 import scalatags.Text.all._
 
 import zio.Task
-import Util.{messageList, getZ}
+import Util.messageList
 
 case class UIRoute()(implicit val log: cask.Logger) extends cask.Routes {
 
-  @getZ("/")
+  @Util.GetZ("/")
   def hello(): Task[String] = ChatHome.hello()
 
   @cask.decorators.compress
