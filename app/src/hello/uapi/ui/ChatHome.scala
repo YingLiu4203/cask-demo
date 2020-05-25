@@ -1,6 +1,6 @@
 package app.hello.uapi
 
-import zio.{Runtime, URIO, ZIO}
+import zio.{Task, Runtime, URIO, ZIO}
 import app.db.dbContext
 import app.db.dbService
 import app.db.dbService.DbService
@@ -10,16 +10,13 @@ import Util.{dbLayers, messageList}
 object ChatHome {
   import scalatags.Text.all._
 
-  def hello(): String = {
+  def hello(): Task[String] = {
 
-    val run = runHello().provideLayer(dbLayers)
-    Runtime.default.unsafeRun(run)
-  }
-
-  def runHello(): URIO[DbService, String] = {
-    for {
+    val runnable = for {
       messages <- messageList()
     } yield render(messages)
+
+    runnable.provideLayer(dbLayers)
   }
 
   private def render(messages: Frag): String = {

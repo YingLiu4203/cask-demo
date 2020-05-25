@@ -2,12 +2,13 @@ package app.hello.uapi
 
 import scalatags.Text.all._
 
-import Util.messageList
+import zio.Task
+import Util.{messageList, getZ}
 
 case class UIRoute()(implicit val log: cask.Logger) extends cask.Routes {
 
-  @cask.get("/")
-  def hello() = ChatHome.hello()
+  @getZ("/")
+  def hello(): Task[String] = ChatHome.hello()
 
   @cask.decorators.compress
   @cask.staticFiles("/static/js")

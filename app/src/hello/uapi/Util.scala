@@ -1,6 +1,8 @@
 package app.hello.uapi
 
-import zio.URIO
+import zio.{Runtime, URIO, ZIO, Task}
+import cask.Response
+import cask.internal.Conversion
 
 import scalatags.Text.all._
 import app.db.dbContext
@@ -25,4 +27,11 @@ object Util {
       for ((name, msg) <- messageList)
         yield p(b(name), " ", msg)
     )
+
+  class getZ(override val path: String) extends cask.endpoints.get(path) {
+    def convertToResultType(task: Task[String]): Response.Raw = {
+      val t = Runtime.default.unsafeRunTask(task)
+      Response(t)
+    }
+  }
 }

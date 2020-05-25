@@ -3,7 +3,7 @@ package app.db
 import zio.{Has, UIO, URLayer, URIO, ZIO, ZLayer}
 
 import app.db.dbContext.{DbContext, PgContext}
-import app.model.{Message, MessageOps}
+import app.model.Message
 
 object dbService {
 
