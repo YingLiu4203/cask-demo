@@ -22,6 +22,7 @@ object ChatHome {
   private def render(messages: Frag): String = {
     html(
       head(
+        meta(charset := "utf-8"),
         link(
           rel := "stylesheet",
           href := "/static/css/bootstrap441.min.css"
@@ -30,7 +31,7 @@ object ChatHome {
       ),
       body(
         div(cls := "container")(
-          h1("Scala Chat"),
+          h1("Scala Chat 聊天"),
           hr,
           div(id := "messageList")(
             messages
