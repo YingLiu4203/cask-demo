@@ -9,17 +9,22 @@ import app.db.dbContext
 import app.db.dbService
 import app.db.dbService.DbService
 
+import com.typesafe.scalalogging.{Logger => Slog}
+
 object Util {
+
+  val slog = Slog(Util.getClass)
 
   var openConnections = Set.empty[cask.WsChannelActor]
 
   def messageList(): URIO[DbService, Frag] = {
+    slog.debug("call messageList()")
     for {
       messageList <- dbService.messages
     } yield (createList(messageList))
   }
 
-  private def createList(messageList: List[(String, String)]) =
+  def createList(messageList: List[(String, String)]) =
     frag(
       for ((name, msg) <- messageList)
         yield p(b(name), " ", msg)
@@ -27,7 +32,9 @@ object Util {
 
   class GetZ(override val path: String) extends cask.endpoints.get(path) {
     def convertToResultType(task: Task[String]): Response.Raw = {
+      slog.debug("ZIO run for GetZ")
       val t = Runtime.default.unsafeRunTask(task)
+      slog.debug("ZIO After run for GetZ")
       Response(t)
     }
   }
@@ -35,7 +42,9 @@ object Util {
   class PostJsonZ(override val path: String)
       extends cask.endpoints.postJson(path) {
     def convertToResultType(task: Task[ujson.Obj]): Response.Raw = {
+      slog.debug("ZIO run for PostJsonZ")
       val t = Runtime.default.unsafeRunTask(task)
+      slog.debug("ZIO AFTER run for PostJsonZ")
       Response(t)
     }
   }

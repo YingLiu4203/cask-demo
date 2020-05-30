@@ -1,7 +1,5 @@
 package app.hello.uapi
 
-import Util.openConnections
-
 case class ApiRoute()(implicit val log: cask.Logger) extends cask.Routes {
 
   @cask.websocket("/subscribe")

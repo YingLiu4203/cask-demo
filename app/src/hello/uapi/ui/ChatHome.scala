@@ -13,12 +13,10 @@ import th.logz
 object ChatHome {
   import scalatags.Text.all._
 
-  // val log = logz.getLogger("ChatHome")
-
   def hello() = {
 
     val runnable = for {
-      log <- logz.getLogger("ChatHome")
+      log <- logz.getLogger("app.ChatHome")
       _ <- log.info("get message list")
       messages <- messageList()
     } yield render(messages)
@@ -33,8 +31,7 @@ object ChatHome {
         link(
           rel := "stylesheet",
           href := "/static/css/bootstrap441.min.css"
-        ),
-        script(src := "/static/js/chat-form.js")
+        )
       ),
       body(
         div(cls := "container")(
@@ -45,7 +42,7 @@ object ChatHome {
           ),
           hr,
           div(id := "errorDiv", color.red),
-          form(onsubmit := "submitForm()")(
+          form(id := "chatForm")(
             input(
               `type` := "text",
               id := "nameInput",
@@ -60,7 +57,8 @@ object ChatHome {
             ),
             input(`type` := "submit", width := "20%")
           )
-        )
+        ),
+        script(src := "/static/js/chat-form.js")
       )
     ).render
   }

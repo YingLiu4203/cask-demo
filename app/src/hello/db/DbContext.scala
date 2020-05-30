@@ -23,8 +23,8 @@ object dbContext {
 
   val embeddedPg: URLayer[LogZ, DbContext] = ZLayer.fromService(logz =>
     new Service {
-      val log = logz.getLogger("embeddedPg")
-      def context: UIO[PgContext] = create(log)
+      val log = logz.getLogger("app.dbContext")
+      val context: UIO[PgContext] = create(log)
     }
   )
 

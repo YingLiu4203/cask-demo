@@ -4,12 +4,16 @@ import zio.{Runtime, URIO, UIO, ZIO}
 import scalatags.Text.all._
 
 import app.db.dbService
-import Util.{openConnections, messageList}
+import Util.{openConnections, createList}
 import app.db.dbService
 import app.db.dbService.DbService
 import app.hello.Layers
 
+import com.typesafe.scalalogging.{Logger => Slog}
+
 object Hello {
+
+  val slog = Slog(Hello.getClass)
 
   def postHello(name: String, msg: String): UIO[ujson.Obj] = {
     if (name == "")
@@ -50,14 +54,14 @@ object Hello {
           .render()
       )
       for (conn <- openConnections) conn.send(notification)
-      openConnections = Set.empty
+      openConnections = Set.empty // synchronized clients will be added back
       ujson.Obj("success" -> true, "txt" -> messageList)
     }
 
     for {
-      msgLength <- dbService.insertMessage(name, msg)
-      messageList <- messageList()
-    } yield insert(msgLength, messageList.render)
+      _ <- dbService.insertMessage(name, msg)
+      messages <- dbService.messages
+    } yield insert(messages.length, createList(messages).render)
   }
 
 }
