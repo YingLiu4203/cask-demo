@@ -4,9 +4,10 @@ import zio.{Runtime, URIO, UIO, ZIO}
 import scalatags.Text.all._
 
 import app.db.dbService
-import Util.{dbLayers, openConnections, messageList}
+import Util.{openConnections, messageList}
 import app.db.dbService
 import app.db.dbService.DbService
+import app.hello.Layers
 
 object Hello {
 
@@ -30,7 +31,7 @@ object Hello {
         )
       )
     else {
-      runEffect(name, msg).provideLayer(dbLayers)
+      runEffect(name, msg).provideLayer(Layers.dbLayers)
     }
   }
 

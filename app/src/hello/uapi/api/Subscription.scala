@@ -5,7 +5,7 @@ import zio.{Runtime, URIO, ZIO}
 import scalatags.Text.all._
 
 import app.db.dbService
-import Util.{dbLayers, openConnections, messageList}
+import Util.{openConnections, messageList}
 import cask.endpoints.{WsActor, WsChannelActor}
 import scala.concurrent.ExecutionContext
 import castor.Context
@@ -14,6 +14,8 @@ import cask.util.Logger
 import app.db.dbService
 import app.db.dbService.DbService
 
+import app.hello.Layers
+
 object Subscription {
 
   def handle(
@@ -21,7 +23,7 @@ object Subscription {
   )(implicit ac: Context, log: Logger): WsActor = {
 
     def subscribe(msg: String) = {
-      val run = runSubscribe(connection, msg).provideLayer(dbLayers)
+      val run = runSubscribe(connection, msg).provideLayer(Layers.dbLayers)
       Runtime.default.unsafeRun(run)
     }
 

@@ -1,11 +1,15 @@
 package app.db
 
+import com.typesafe.scalalogging.Logger
+
 import zio.{Has, UIO, URLayer, URIO, ZIO, ZLayer}
 
 import app.db.dbContext.{DbContext, PgContext}
 import app.model.Message
 
 object dbService {
+
+  val log = Logger(dbService.getClass)
 
   type DbService = Has[Service]
 
@@ -23,5 +27,8 @@ object dbService {
     ZIO.accessM(_.get.insertMessage(name, msg))
 
   val pgService: URLayer[DbContext, DbService] =
-    ZLayer.fromService(dbContext => PgService(dbContext.context))
+    ZLayer.fromService(dbContext => {
+      log.info("create PgService")
+      PgService(dbContext.context)
+    })
 }

@@ -11,9 +11,6 @@ import app.db.dbService.DbService
 
 object Util {
 
-  val dbContextLayer = dbContext.embeddedPg
-  val dbLayers = dbContextLayer >>> dbService.pgService
-
   var openConnections = Set.empty[cask.WsChannelActor]
 
   def messageList(): URIO[DbService, Frag] = {

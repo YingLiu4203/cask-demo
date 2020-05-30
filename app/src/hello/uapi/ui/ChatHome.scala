@@ -5,18 +5,25 @@ import app.db.dbContext
 import app.db.dbService
 import app.db.dbService.DbService
 
-import Util.{dbLayers, messageList}
+import Util.messageList
+import app.hello.Layers
+
+import th.logz
 
 object ChatHome {
   import scalatags.Text.all._
 
-  def hello(): Task[String] = {
+  // val log = logz.getLogger("ChatHome")
+
+  def hello() = {
 
     val runnable = for {
+      log <- logz.getLogger("ChatHome")
+      _ <- log.info("get message list")
       messages <- messageList()
     } yield render(messages)
 
-    runnable.provideLayer(dbLayers)
+    runnable.provideLayer(Layers.dbLayers)
   }
 
   private def render(messages: Frag): String = {
