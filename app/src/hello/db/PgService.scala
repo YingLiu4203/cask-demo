@@ -13,8 +13,23 @@ final case object PgService extends DbService {
   type PgContext = PostgresJdbcContext[LowerCase]
   val slog = Slog(PgService.getClass)
 
-  val pgContext = create()
-  private var count: Int = 0
+  // db setup neeeds this
+  val pgContext: PgContext = {
+
+    val pgDataSource = new org.postgresql.ds.PGSimpleDataSource()
+    pgDataSource.setUser("postgres")
+
+    val config = new HikariConfig()
+    config.setDataSource(pgDataSource)
+
+    // the two lines work differently if moved out of this UIO constructor
+    slog.info("!!!Important PgContext creation")
+
+    new PgContext(
+      LowerCase,
+      new HikariDataSource(config)
+    )
+  }
 
   import pgContext._
 
@@ -28,21 +43,4 @@ final case object PgService extends DbService {
     pgContext.run(query[Message].insert(lift(Message(name, msg))))
   }
 
-  private def create(): PgContext = {
-
-    val pgDataSource = new org.postgresql.ds.PGSimpleDataSource()
-    pgDataSource.setUser("postgres")
-
-    val config = new HikariConfig()
-    config.setDataSource(pgDataSource)
-
-    // the two lines work differently if moved out of this UIO constructor
-    count += 1
-    slog.info(s"!!!important PgContext creation count: $count")
-
-    new PgContext(
-      LowerCase,
-      new HikariDataSource(config)
-    )
-  }
 }
