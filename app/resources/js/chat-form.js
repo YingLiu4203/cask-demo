@@ -28,7 +28,7 @@ var socket = new WebSocket('ws://' + location.host + '/subscribe')
 var eventIndex = 0
 socket.onopen = function (ev) {
   console.log(`socket.onopen eventIndex ${eventIndex}`)
-  socket.send('' + eventIndex)
+  socket.send('' + eventIndex) // sync and register WS client
 }
 
 socket.onmessage = function (ev) {

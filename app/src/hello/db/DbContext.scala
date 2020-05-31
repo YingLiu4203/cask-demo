@@ -23,15 +23,16 @@ object dbContext {
 
   val embeddedPg: URLayer[LogZ, DbContext] = ZLayer.fromService(logz =>
     new Service {
+      // only executed once ot construct the context effect
+      // but the context may execute multiple times
       val log = logz.getLogger("app.dbContext")
+      slog.debug("create a new service of PgContext")
+
       val context: UIO[PgContext] = create(log)
     }
   )
 
   private def create(log: Logger): UIO[PgContext] = {
-
-    count += 1
-    slog.debug(s"!!!important code count: $count")
 
     log.info("create pgDataSoruce " + count) *> UIO {
 
@@ -40,6 +41,10 @@ object dbContext {
 
       val config = new HikariConfig()
       config.setDataSource(pgDataSource)
+
+      // the two lines work differently if moved out of this UIO constructor
+      count += 1
+      slog.debug(s"!!!important code count: $count")
 
       slog.info("inside PGContext lowerCase")
       new PgContext(
