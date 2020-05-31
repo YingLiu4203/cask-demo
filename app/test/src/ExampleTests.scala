@@ -17,7 +17,7 @@ object ExampleTests extends TestSuite {
   }
 
   val tests = Tests {
-    test("HelloApp") - withServer(App) { host =>
+    test("HelloApp") - withServer(MyApp) { host =>
       val success = requests.get(host)
 
       success.statusCode ==> 200
