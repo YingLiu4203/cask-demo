@@ -2,8 +2,6 @@ package app.hello.uapi
 
 import zio.{Runtime, URIO, ZIO}
 
-import scalatags.Text.all._
-
 import app.db.dbService
 import Util.{openConnections, createList}
 import cask.endpoints.{WsActor, WsChannelActor}
@@ -17,8 +15,10 @@ import app.db.dbService
 import app.db.dbService.DbService
 
 import app.hello.Layers
+import th.logz
 
 object Subscription {
+  import scalatags.Text.all._
 
   val slog = Slog(Subscription.getClass)
 
@@ -42,7 +42,7 @@ object Subscription {
   private def runSubscribe(
       connection: WsChannelActor,
       msg: String
-  ): URIO[DbService, Unit] = {
+  ): URIO[DbService with logz.LogZ, Unit] = {
     def subscribe(messagesLength: Int, messageList: String) =
       if (msg.toInt < messagesLength) {
         val response = cask.Ws.Text(

@@ -17,7 +17,7 @@ object ChatHome {
 
     val runnable = for {
       log <- logz.getLogger("app.ChatHome")
-      _ <- log.info("get message list")
+      _ <- log.info("in hello()")
       messages <- messageList()
     } yield render(messages)
 

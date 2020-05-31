@@ -31,6 +31,8 @@ object dbContext {
   private def create(log: Logger): UIO[PgContext] = {
 
     count += 1
+    slog.debug(s"!!!important code count: $count")
+
     log.info("create pgDataSoruce " + count) *> UIO {
 
       val pgDataSource = new org.postgresql.ds.PGSimpleDataSource()

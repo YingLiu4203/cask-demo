@@ -14,7 +14,6 @@ function submitForm(event) {
     .then((json) => {
       console.log(`submitForm fetch result: ${json.txt}`)
       if (json.success) {
-        // messageList.innerHTML = json.txt
         msgInput.value = ''
         errorDiv.innerText = ''
       } else {

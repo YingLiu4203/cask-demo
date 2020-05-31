@@ -4,20 +4,21 @@ import zio.{Runtime, URIO, ZIO, Task}
 import cask.Response
 import cask.internal.Conversion
 
-import scalatags.Text.all._
 import app.db.dbContext
 import app.db.dbService
 import app.db.dbService.DbService
 
 import com.typesafe.scalalogging.{Logger => Slog}
+import th.logz
 
 object Util {
+  import scalatags.Text.all._
 
   val slog = Slog(Util.getClass)
 
   var openConnections = Set.empty[cask.WsChannelActor]
 
-  def messageList(): URIO[DbService, Frag] = {
+  def messageList(): URIO[DbService with logz.LogZ, Frag] = {
     slog.debug("call messageList()")
     for {
       messageList <- dbService.messages
