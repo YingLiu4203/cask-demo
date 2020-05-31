@@ -23,7 +23,7 @@ object dbContext {
 
   val embeddedPg: URLayer[LogZ, DbContext] = ZLayer.fromService(logz =>
     new Service {
-      // only executed once ot construct the context effect
+      // only executed once to constructor the context effect
       // but the context may execute multiple times
       val log = logz.getLogger("app.dbContext")
       slog.debug("create a new service of PgContext")
