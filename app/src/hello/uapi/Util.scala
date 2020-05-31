@@ -1,31 +1,26 @@
 package app.hello.uapi
 
-import zio.{Runtime, URIO, ZIO, Task}
+import zio.{Has, Runtime, URIO, ZIO, Task}
 import cask.Response
 import cask.internal.Conversion
 
-import app.db.dbContext
-import app.db.dbService
-import app.db.dbService.DbService
+import app.db.DbService
 
 import com.typesafe.scalalogging.{Logger => Slog}
-import th.logz
+import scalatags.Text.all._
 
 object Util {
-  import scalatags.Text.all._
 
   val slog = Slog(Util.getClass)
 
   var openConnections = Set.empty[cask.WsChannelActor]
 
-  def messageList(): URIO[DbService with logz.LogZ, Frag] = {
-    slog.debug("call messageList()")
+  def messageList() =
     for {
-      messageList <- dbService.messages
+      messageList <- DbService.messages
     } yield (createList(messageList))
-  }
 
-  def createList(messageList: List[(String, String)]) =
+  def createList(messageList: List[(String, String)]): Frag =
     frag(
       for ((name, msg) <- messageList)
         yield p(b(name), " ", msg)

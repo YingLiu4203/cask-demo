@@ -3,26 +3,46 @@ package app.db
 import zio.UIO
 import com.typesafe.scalalogging.{Logger => Slog}
 
-import app.db.dbContext.PgContext
-import app.db.dbService.Service
 import app.model.Message
 
-private[db] final case class PgService(zpgContext: UIO[PgContext])
-    extends Service {
+import io.getquill.{PostgresJdbcContext, LowerCase}
+import com.zaxxer.hikari.{HikariConfig, HikariDataSource}
 
-  val slog = Slog[PgService]
+final case object PgService extends DbService {
 
-  def messages: UIO[List[(String, String)]] =
-    zpgContext.map { pgContext =>
-      slog.debug("db messages")
-      import pgContext._
-      pgContext.run(query[Message].map(m => (m.name, m.msg)))
-    }
+  type PgContext = PostgresJdbcContext[LowerCase]
+  val slog = Slog(PgService.getClass)
 
-  def insertMessage(name: String, msg: String): UIO[Long] =
-    zpgContext.map { pgContext =>
-      slog.debug(s"db insert ${name} ${msg}")
-      import pgContext._
-      pgContext.run(query[Message].insert(lift(Message(name, msg))))
-    }
+  val pgContext = create()
+  private var count: Int = 0
+
+  import pgContext._
+
+  def messages(): UIO[List[(String, String)]] = UIO {
+    slog.debug("db messages")
+    pgContext.run(query[Message].map(m => (m.name, m.msg)))
+  }
+
+  def insertMessage(name: String, msg: String): UIO[Long] = UIO {
+    slog.debug(s"db insert ${name} ${msg}")
+    pgContext.run(query[Message].insert(lift(Message(name, msg))))
+  }
+
+  private def create(): PgContext = {
+
+    val pgDataSource = new org.postgresql.ds.PGSimpleDataSource()
+    pgDataSource.setUser("postgres")
+
+    val config = new HikariConfig()
+    config.setDataSource(pgDataSource)
+
+    // the two lines work differently if moved out of this UIO constructor
+    count += 1
+    slog.info(s"!!!important PgContext creation count: $count")
+
+    new PgContext(
+      LowerCase,
+      new HikariDataSource(config)
+    )
+  }
 }

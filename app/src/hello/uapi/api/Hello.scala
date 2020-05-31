@@ -1,11 +1,9 @@
 package app.hello.uapi
 
-import zio.{Runtime, URIO, UIO, ZIO}
+import zio.{Has, Runtime, URIO, UIO, ZIO}
 
-import app.db.dbService
+import app.db.DbService
 import Util.{openConnections, createList}
-import app.db.dbService
-import app.db.dbService.DbService
 import app.hello.Layers
 
 import com.typesafe.scalalogging.{Logger => Slog}
@@ -43,7 +41,7 @@ object Hello {
   private def runEffect(
       name: String,
       msg: String
-  ): URIO[DbService with logz.LogZ, ujson.Obj] = {
+  ): URIO[Has[DbService] with logz.LogZ, ujson.Obj] = {
 
     def insert(length: Long, messageList: String) = {
       val notification = cask.Ws.Text(
@@ -60,8 +58,8 @@ object Hello {
     }
 
     for {
-      _ <- dbService.insertMessage(name, msg)
-      messages <- dbService.messages
+      _ <- DbService.insertMessage(name, msg)
+      messages <- DbService.messages
     } yield insert(messages.length, createList(messages).render)
   }
 

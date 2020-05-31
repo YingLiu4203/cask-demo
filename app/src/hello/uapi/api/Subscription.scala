@@ -1,8 +1,7 @@
 package app.hello.uapi
 
-import zio.{Runtime, URIO, ZIO}
+import zio.{Has, Runtime, URIO, ZIO}
 
-import app.db.dbService
 import Util.{openConnections, createList}
 import cask.endpoints.{WsActor, WsChannelActor}
 import scala.concurrent.ExecutionContext
@@ -11,8 +10,7 @@ import cask.util.Logger
 
 import com.typesafe.scalalogging.{Logger => Slog}
 
-import app.db.dbService
-import app.db.dbService.DbService
+import app.db.DbService
 
 import app.hello.Layers
 import th.logz
@@ -42,8 +40,8 @@ object Subscription {
   private def runSubscribe(
       connection: WsChannelActor,
       msg: String
-  ): URIO[DbService with logz.LogZ, Unit] = {
-    def subscribe(messagesLength: Int, messageList: String) =
+  ): URIO[Has[DbService] with logz.LogZ, Unit] = {
+    def subscribe0(messagesLength: Int, messageList: String) =
       if (msg.toInt < messagesLength) {
         val response = cask.Ws.Text(
           ujson
@@ -61,7 +59,7 @@ object Subscription {
       }
 
     for {
-      messages <- dbService.messages
-    } yield subscribe(messages.length, createList(messages).render)
+      messages <- DbService.messages()
+    } yield subscribe0(messages.length, createList(messages).render)
   }
 }

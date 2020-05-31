@@ -20,7 +20,7 @@ object MyApp extends cask.Main with LazyLogging {
 
   private def createTableIfNotExists() = {
     val run =
-      dbSetup.createTableIfNotExists().provideLayer(Layers.dbContextLayer)
+      dbSetup.createTableIfNotExists()
     Runtime.default.unsafeRun(run)
   }
 }

@@ -1,11 +1,9 @@
 package app.hello.uapi
 
 import zio.{Task, Runtime, URIO, ZIO}
-import app.db.dbContext
-import app.db.dbService
-import app.db.dbService.DbService
 
-import Util.messageList
+import app.db.DbService
+
 import app.hello.Layers
 
 import th.logz
@@ -17,8 +15,8 @@ object ChatHome {
 
     val runnable = for {
       log <- logz.getLogger("app.ChatHome")
-      _ <- log.info("in hello()")
-      messages <- messageList()
+      _ <- log.debug("in hello()")
+      messages <- Util.messageList()
     } yield render(messages)
 
     runnable.provideLayer(Layers.dbLayers)
