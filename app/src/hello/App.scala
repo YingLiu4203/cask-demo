@@ -1,16 +1,14 @@
 package app.hello
 
-import com.tersesystems.blindsight.LoggerFactory
-
 import zio.{Runtime, URIO, ZIO}
 
 import app.db.{dbSetup, embeddedPg}
 
 import app.hello.uapi.{ApiRoute, UIRoute, Util}
 
-object MyApp extends cask.Main {
+import th.logz.StrictLog
 
-  val logger = LoggerFactory.getLogger
+object MyApp extends cask.Main with StrictLog {
 
   embeddedPg.start()
   logger.info("Embedded Pg started.")

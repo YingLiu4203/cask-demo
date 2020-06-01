@@ -6,7 +6,8 @@ import app.db.DbService
 
 import app.hello.Layers
 
-import th.logz
+// use the LogZ service to customize the log name
+import th.logz.LogZ
 
 object ChatHome {
   import scalatags.Text.all._
@@ -14,12 +15,12 @@ object ChatHome {
   def hello() = {
 
     val runnable = for {
-      log <- logz.getLogger("app.ChatHome")
-      _ <- log.debug("in hello()")
+      zLog <- LogZ.getLogger("app.hello.uapi")
+      _ <- zLog.debug("in hello()")
       messages <- Util.messageList()
     } yield render(messages)
 
-    runnable.provideLayer(Layers.dbLayers)
+    runnable.provideLayer(LogZ.live ++ Layers.dbLayers)
   }
 
   private def render(messages: Frag): String = {

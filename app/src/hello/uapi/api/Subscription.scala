@@ -13,7 +13,6 @@ import com.tersesystems.blindsight.LoggerFactory
 import app.db.DbService
 
 import app.hello.Layers
-import th.logz
 
 object Subscription {
   import scalatags.Text.all._
@@ -40,7 +39,7 @@ object Subscription {
   private def runSubscribe(
       connection: WsChannelActor,
       msg: String
-  ): URIO[Has[DbService] with logz.LogZ, Unit] = {
+  ): URIO[Has[DbService], Unit] = {
     def subscribe0(messagesLength: Int, messageList: String) =
       if (msg.toInt < messagesLength) {
         val response = cask.Ws.Text(

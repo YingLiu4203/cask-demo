@@ -7,9 +7,9 @@ import Util.{openConnections, createList}
 import app.hello.Layers
 
 import com.tersesystems.blindsight.LoggerFactory
-import th.logz
+import th.logz.StrictLogZ
 
-object Hello {
+object Hello extends StrictLogZ {
   val logger = LoggerFactory.getLogger
 
   import scalatags.Text.all._
@@ -41,7 +41,7 @@ object Hello {
   private def runEffect(
       name: String,
       msg: String
-  ): URIO[Has[DbService] with logz.LogZ, ujson.Obj] = {
+  ): URIO[Has[DbService], ujson.Obj] = {
 
     def insert(length: Long, messageList: String) = {
       val notification = cask.Ws.Text(
@@ -58,6 +58,7 @@ object Hello {
     }
 
     for {
+      _ <- zLog.debug("insert message and get messages")
       _ <- DbService.insertMessage(name, msg)
       messages <- DbService.messages
     } yield insert(messages.length, createList(messages).render)

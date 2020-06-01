@@ -43,9 +43,17 @@ object logz extends ScalaModule {
 
   def scalaVersion = "2.13.1"
 
+  import coursier.maven.MavenRepository
+
+  def repositories = super.repositories ++ Seq(
+    MavenRepository(
+      "https://dl.bintray.com/tersesystems/maven"
+    )
+  )
+
   def ivyDeps = Agg(
     ivy"dev.zio::zio:1.0.0-RC20",
     ivy"org.slf4j:slf4j-api:1.7.30",
-    ivy"com.typesafe.scala-logging::scala-logging:3.9.2"
+    ivy"com.tersesystems.blindsight::blindsight-logstash:1.0.1"
   )
 }
