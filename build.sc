@@ -6,6 +6,14 @@ object app extends ScalaModule {
 
   def scalaVersion = "2.13.1"
 
+  import coursier.maven.MavenRepository
+
+  def repositories = super.repositories ++ Seq(
+    MavenRepository(
+      "https://dl.bintray.com/tersesystems/maven"
+    )
+  )
+
   def ivyDeps = Agg(
     ivy"com.lihaoyi::cask:0.6.0",
     ivy"io.getquill::quill-jdbc:3.5.1",
@@ -15,6 +23,7 @@ object app extends ScalaModule {
     ivy"dev.zio::zio:1.0.0-RC20",
     ivy"com.lihaoyi::geny:0.6.0",
     ivy"com.typesafe.scala-logging::scala-logging:3.9.2",
+    ivy"com.tersesystems.blindsight::blindsight-logstash:1.0.1",
     ivy"ch.qos.logback:logback-classic:1.2.3"
   )
 

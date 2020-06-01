@@ -8,7 +8,7 @@ import scala.concurrent.ExecutionContext
 import castor.Context
 import cask.util.Logger
 
-import com.typesafe.scalalogging.{Logger => Slog}
+import com.tersesystems.blindsight.LoggerFactory
 
 import app.db.DbService
 
@@ -18,14 +18,14 @@ import th.logz
 object Subscription {
   import scalatags.Text.all._
 
-  val slog = Slog(Subscription.getClass)
+  val logger = LoggerFactory.getLogger
 
   def handle(
       connection: WsChannelActor
   )(implicit ac: Context, log: Logger): WsActor = {
 
     def subscribe(msg: String) = {
-      slog.debug(s"ZIO run websocket subscribe $msg")
+      logger.debug(s"ZIO run websocket subscribe $msg")
       val run = runSubscribe(connection, msg).provideLayer(Layers.dbLayers)
       Runtime.default.unsafeRun(run)
     }
@@ -51,10 +51,10 @@ object Subscription {
             )
             .render()
         )
-        slog.debug(s"connection.send ${messagesLength} messages")
+        logger.debug(s"connection.send ${messagesLength} messages")
         connection.send(response)
       } else {
-        slog.debug("add a new connection")
+        logger.debug("add a new connection")
         openConnections += connection
       }
 

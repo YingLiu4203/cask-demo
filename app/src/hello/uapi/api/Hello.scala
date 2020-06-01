@@ -6,13 +6,13 @@ import app.db.DbService
 import Util.{openConnections, createList}
 import app.hello.Layers
 
-import com.typesafe.scalalogging.{Logger => Slog}
+import com.tersesystems.blindsight.LoggerFactory
 import th.logz
 
 object Hello {
-  import scalatags.Text.all._
+  val logger = LoggerFactory.getLogger
 
-  val slog = Slog(Hello.getClass)
+  import scalatags.Text.all._
 
   def postHello(name: String, msg: String): UIO[ujson.Obj] = {
     if (name == "")

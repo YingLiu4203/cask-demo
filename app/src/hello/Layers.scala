@@ -4,14 +4,14 @@ import th.logz.LogZ
 
 import app.db.DbService
 
-import com.typesafe.scalalogging.{Logger => Slog}
+import com.tersesystems.blindsight.LoggerFactory
 
 object Layers {
 
-  val slog = Slog(Layers.getClass)
+  val logger = LoggerFactory.getLogger
 
   val dbLayers = {
-    slog.debug("build dbLayers")
+    logger.debug("build dbLayers")
     LogZ.live ++ DbService.pgService
   }
 }

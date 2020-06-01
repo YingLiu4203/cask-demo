@@ -6,12 +6,12 @@ import cask.internal.Conversion
 
 import app.db.DbService
 
-import com.typesafe.scalalogging.{Logger => Slog}
+import com.tersesystems.blindsight.LoggerFactory
 import scalatags.Text.all._
 
 object Util {
 
-  val slog = Slog(Util.getClass)
+  val logger = LoggerFactory.getLogger
 
   var openConnections = Set.empty[cask.WsChannelActor]
 
@@ -28,9 +28,9 @@ object Util {
 
   class GetZ(override val path: String) extends cask.endpoints.get(path) {
     def convertToResultType(task: Task[String]): Response.Raw = {
-      slog.debug("ZIO run for GetZ")
+      logger.debug("ZIO run for GetZ")
       val t = Runtime.default.unsafeRunTask(task)
-      slog.debug("ZIO After run for GetZ")
+      logger.debug("ZIO After run for GetZ")
       Response(t)
     }
   }
@@ -38,9 +38,9 @@ object Util {
   class PostJsonZ(override val path: String)
       extends cask.endpoints.postJson(path) {
     def convertToResultType(task: Task[ujson.Obj]): Response.Raw = {
-      slog.debug("ZIO run for PostJsonZ")
+      logger.debug("ZIO run for PostJsonZ")
       val t = Runtime.default.unsafeRunTask(task)
-      slog.debug("ZIO AFTER run for PostJsonZ")
+      logger.debug("ZIO AFTER run for PostJsonZ")
       Response(t)
     }
   }

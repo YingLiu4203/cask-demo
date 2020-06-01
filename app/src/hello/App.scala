@@ -1,6 +1,6 @@
 package app.hello
 
-import com.typesafe.scalalogging.{Logger, LazyLogging}
+import com.tersesystems.blindsight.LoggerFactory
 
 import zio.{Runtime, URIO, ZIO}
 
@@ -8,7 +8,9 @@ import app.db.{dbSetup, embeddedPg}
 
 import app.hello.uapi.{ApiRoute, UIRoute, Util}
 
-object MyApp extends cask.Main with LazyLogging {
+object MyApp extends cask.Main {
+
+  val logger = LoggerFactory.getLogger
 
   embeddedPg.start()
   logger.info("Embedded Pg started.")
